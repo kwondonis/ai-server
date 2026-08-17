@@ -8,11 +8,12 @@ from dotenv import load_dotenv
 
 # .env 파일에서 비밀키 불러오기
 load_dotenv()
-COHERE_API_KEY = os.getenv("COHERE_API_KEY")
-co = cohere.Client(COHERE_API_KEY)
 
-# Cohere API 키 입력
-COHERE_API_KEY = "cohere_p11JQpda3n29062I9dhOgZQ9HGrP05JRt0yUVZWw37ckGy"
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+
+if not COHERE_API_KEY:
+    raise RuntimeError("COHERE_API_KEY 환경변수가 설정되지 않았습니다.")
+
 co = cohere.Client(COHERE_API_KEY)
 
 app = FastAPI(title="Pillter AI Server")
