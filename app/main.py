@@ -18,8 +18,13 @@ co = cohere.Client(COHERE_API_KEY)
 
 app = FastAPI(title="Pillter AI Server")
 
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/api/chat")
-async def chat_endpoint(request: ChatRequest):
+def chat_endpoint(request: ChatRequest):
     try:
         current_supps = ", ".join(request.user_profile.current_supplements) if request.user_profile.current_supplements else "없음"
         
@@ -63,10 +68,12 @@ async def chat_endpoint(request: ChatRequest):
             "data": result_data
         }
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="AI 응답 생성에 실패했습니다.",
+        ) from exc
 
 if __name__ == "__main__":
     import uvicorn
-    # 폴더 구조가 바뀌었으므로 실행 경로를 명시합니다.
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8001, reload=True)
